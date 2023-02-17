@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 
 import { PrivateRoutingModule } from './private-routing.module';
 import { PrivateComponent } from './private.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 
 @NgModule({
   declarations: [
-    PrivateComponent
+    PrivateComponent,
+    DashboardComponent
   ],
   imports: [
     CommonModule,

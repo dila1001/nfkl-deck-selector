@@ -4,16 +4,10 @@ import { CommonModule } from '@angular/common';
 import { PublicRoutingModule } from './public-routing.module';
 import { PublicComponent } from './public.component';
 import { LoginComponent } from './components/login/login.component';
-
+import { MaterialModule } from '../core/material/material.module';
 
 @NgModule({
-  declarations: [
-    PublicComponent,
-    LoginComponent
-  ],
-  imports: [
-    CommonModule,
-    PublicRoutingModule
-  ]
+  declarations: [PublicComponent, LoginComponent],
+  imports: [CommonModule, PublicRoutingModule, MaterialModule],
 })
-export class PublicModule { }
+export class PublicModule {}
