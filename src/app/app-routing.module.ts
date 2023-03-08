@@ -15,7 +15,7 @@ const routes: Routes = [
     path: 'dashboard',
     loadChildren: () =>
       import('./private/private.module').then((m) => m.PrivateModule),
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
   },
   // redirect to public if no path is provided
   { path: '', redirectTo: 'login', pathMatch: 'full' },
