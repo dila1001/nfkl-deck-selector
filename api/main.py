@@ -8,7 +8,7 @@ import security.google
 app = FastAPI()
 
 @app.get("/users/", response_model=User)
-async def read_users_me(
+async def users(
     current_user: Annotated[User, Depends(security.auth.get_current_user)]
 ):
     return current_user

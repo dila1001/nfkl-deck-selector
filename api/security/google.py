@@ -46,7 +46,7 @@ def login_user(code: str, request_url: str, base_url: str):
         users_email = userinfo_response.json()["email"]
         picture = userinfo_response.json()["picture"]
         users_name = userinfo_response.json()["name"]
-        return security.auth.login_user(username=users_email)
+        return security.auth.login_user(user_id=unique_id)
     else:
         return "User email not available or not verified by Google.", 400
 

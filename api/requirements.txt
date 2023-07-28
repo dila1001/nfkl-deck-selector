@@ -4,3 +4,4 @@ python-jose[cryptography]
 oauthlib
 requests
 python-dotenv
+SQLAlchemy
