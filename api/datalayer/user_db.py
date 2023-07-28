@@ -9,7 +9,9 @@ def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(User).offset(skip).limit(limit).all()
+    users = db.query(User).offset(skip).limit(limit).all()
+    count = db.query(User).count()
+    return (users, count)
 
 # def create_user(db: Session, user: schemas.UserCreate):
 #     fake_hashed_password = user.password + "notreallyhashed"

@@ -1,17 +1,21 @@
 from typing import Union, Annotated
-from fastapi import FastAPI, Depends, Request
-from model.user import User
+from fastapi import FastAPI, Depends, Request, HTTPException, status
+from model.user import UserList, User
 from model.token import Token
 import security.auth
-import security.google 
+import security.google
+import repositories.users
 
 app = FastAPI()
 
-@app.get("/users/", response_model=User)
+@app.get("/users/", response_model=UserList)
 async def users(
-    current_user: Annotated[User, Depends(security.auth.get_current_user)]
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    page_number: int=0, page_size: int=100,
 ):
-    return current_user
+    if not security.auth.has_role(current_user, 'Admin'):
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Admin only endpoint")
+    return await repositories.users.users(page_number=page_number, page_size=page_size)
 
 @app.get("/login/callback", response_model=Token)
 async def login_callback(code: str, request: Request):
@@ -21,3 +25,9 @@ async def login_callback(code: str, request: Request):
 @app.get("/login")
 async def login(request: Request):
     return { "google_auth_url": security.google.get_auth_endpoint(request.base_url._url) }
+
+def __create_exception(status_code: int, message: str):
+    return HTTPException(
+    status_code,
+    detail=message,
+)

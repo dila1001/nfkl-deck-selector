@@ -6,6 +6,7 @@ from typing import Annotated
 from datalayer.database import get_db
 from sqlalchemy.orm import Session
 from datalayer.user_db import get_user
+from model.user import User
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -48,3 +49,9 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
     if user is None:
         raise credentials_exception
     return user
+
+def has_role(current_user: User, role: str):
+    for r in current_user.roles:
+        if r.name.lower() == role.lower():
+            return True
+    return False
