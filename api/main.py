@@ -10,14 +10,15 @@ import repositories.decks
 
 app = FastAPI()
 
-@app.get("/decks", response_model=DeckList)
+@app.get("/decks", response_model=DeckList, response_model_exclude_none=True)
 async def decks(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],
-    season: str
+    season: str = None
 ):
     if not current_user.approved_user:
         raise __create_exception(status.HTTP_400_BAD_REQUEST, "User needs to be approved first")
-    return await repositories.decks.get_decks(season, current_user)
+
+    return await repositories.decks.get_decks_by_season(season, current_user)
 
 @app.get("/users/", response_model=UserList)
 async def users(

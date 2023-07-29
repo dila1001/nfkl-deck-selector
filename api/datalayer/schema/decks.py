@@ -5,14 +5,19 @@ from datalayer.database import Base
 class Deck(Base):
     __tablename__ = "deck"
 
-    user_id = Column(String, primary_key=True, index=True)
-    deck_id = Column(String, unique=False, index=False)
+    user_id = Column(String, index=True)
+    deck_id = Column(String, unique=False, index=True)
     deck_name = Column(String, unique=False, index=False, nullable=True)
     house_1 = Column(String, unique=False, index=False, nullable=True)
     house_2 = Column(String, unique=False, index=False, nullable=True)
     house_3 = Column(String, unique=False, index=False, nullable=True)
     expansion = Column(String, unique=False, index=False, nullable=True)
     enabled = Column(Boolean, unique=False, index=False, nullable=True, default=False)
+
+    __table_args__ = (
+        PrimaryKeyConstraint(deck_id, user_id),
+        {}
+    )
 
 # CREATE TABLE "deck" (
 #   user_id TEXT NOT NULL,

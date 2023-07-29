@@ -23,7 +23,8 @@ class SeasonDeck(BaseModel):
         from_attributes = True
 
 class DeckList(BaseModel):
-    seasonDeck:list[SeasonDeck] | None
+    seasonDeck:list[SeasonDeck] | None = None
+    decks:list[Deck] | None = None
 
     class Config:
         from_attributes = True
