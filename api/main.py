@@ -1,5 +1,6 @@
 from typing import Union, Annotated
 from fastapi import FastAPI, Depends, Request, HTTPException, status
+from model.season import SeasonList
 from model.user import UserList, User
 from model.deck import DeckList
 from model.token import Token
@@ -8,6 +9,15 @@ import repositories.users, repositories.decks, repositories.seasons
 
 app = FastAPI()
 
+@app.get("/seasons", response_model=SeasonList)
+async def seasons(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)]
+):
+    if not current_user.approved_user:
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "User needs to be approved first")
+
+    return await repositories.seasons.get_all_seasons()
+
 @app.get("/decks", response_model=DeckList, response_model_exclude_none=True)
 async def decks(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],
@@ -15,7 +25,7 @@ async def decks(
     include_all: bool = False
 ):
     if not current_user.approved_user:
-        raise __create_exception(status.HTTP_400_BAD_REQUEST, "User needs to be approved first")
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "User needs to be approved first")
     if include_all and not security.auth.has_role(current_user, 'Admin'):
         raise __create_exception(status.HTTP_401_UNAUTHORIZED, "`include_all` is only available for Admin")
 
