@@ -16,3 +16,8 @@ async def get_decks(user: User):
     db: Session = next(get_db())
     decks = datalayer.deck_db.get_decks(db, user=user)
     return DeckList(decks=decks)
+
+async def get_all_decks():
+    db: Session = next(get_db())
+    decks = datalayer.deck_db.get_all_decks(db)
+    return DeckList(decks=decks)

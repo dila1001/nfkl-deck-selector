@@ -10,3 +10,7 @@ def get_decks_by_season(db: Session, user: User, season=str):
 def get_decks(db: Session, user: User):
     decks = db.query(Deck).filter(Deck.user_id==user.id).all()
     return decks
+
+def get_all_decks(db: Session):
+    decks = db.query(Deck).all()
+    return decks

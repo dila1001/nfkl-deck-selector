@@ -13,14 +13,19 @@ app = FastAPI()
 @app.get("/decks", response_model=DeckList, response_model_exclude_none=True)
 async def decks(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],
-    season: str = None
+    season: str = None,
+    include_all: bool = False
 ):
     if not current_user.approved_user:
         raise __create_exception(status.HTTP_400_BAD_REQUEST, "User needs to be approved first")
+    if include_all and not security.auth.has_role(current_user, 'Admin'):
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "`include_all` is only available for Admin")
 
+    if include_all:
+        return await repositories.decks.get_all_decks()
     return await repositories.decks.get_decks_by_season(season, current_user)
 
-@app.get("/users/", response_model=UserList)
+@app.get("/users", response_model=UserList)
 async def users(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],
     page_number: int=0, page_size: int=100,
