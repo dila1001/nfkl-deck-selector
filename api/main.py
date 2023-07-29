@@ -37,14 +37,20 @@ async def decks(
 async def users(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],
     page_number: int=0, page_size: int=100,
-    only_archived_users: bool = False,
-    season: str = None,
 ):
     if not security.auth.has_role(current_user, 'Admin'):
         raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Admin only endpoint")
-    if only_archived_users and season is not None:
-        return await repositories.users.get_archived_users(season=season, page_number=page_number, page_size=page_size)
     return await repositories.users.users(page_number=page_number, page_size=page_size)
+
+@app.get("/users/archived", response_model=UserList)
+async def archived_users(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    season: str,
+    page_number: int=0, page_size: int=100,
+):
+    if not security.auth.has_role(current_user, 'Admin'):
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Admin only endpoint")
+    return await repositories.users.get_archived_users(season=season, page_number=page_number, page_size=page_size)
 
 @app.get("/login/callback", response_model=Token)
 async def login_callback(code: str, request: Request):
