@@ -19,7 +19,7 @@ class User(BaseModel):
         from_attributes = True
 
 class UserList(BaseModel):
-    users: list[User]
+    users: list[User] | None
     total: int
 
     class Config:
