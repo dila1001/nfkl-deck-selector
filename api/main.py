@@ -3,10 +3,8 @@ from fastapi import FastAPI, Depends, Request, HTTPException, status
 from model.user import UserList, User
 from model.deck import DeckList
 from model.token import Token
-import security.auth
-import security.google
-import repositories.users
-import repositories.decks
+import security.auth, security.google
+import repositories.users, repositories.decks, repositories.seasons
 
 app = FastAPI()
 
