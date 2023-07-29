@@ -2,7 +2,6 @@ from datalayer.database import get_db
 from sqlalchemy.orm import Session
 import datalayer.user_db
 from model.user import UserList
-from datalayer.schema.users import ArchivedUser
 
 async def users(page_number: int=0, page_size: int=100):
     db: Session = next(get_db())
