@@ -1,12 +1,23 @@
 from typing import Union, Annotated
 from fastapi import FastAPI, Depends, Request, HTTPException, status
 from model.user import UserList, User
+from model.deck import DeckList
 from model.token import Token
 import security.auth
 import security.google
 import repositories.users
+import repositories.decks
 
 app = FastAPI()
+
+@app.get("/decks", response_model=DeckList)
+async def decks(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    season: str
+):
+    if not current_user.approved_user:
+        raise __create_exception(status.HTTP_400_BAD_REQUEST, "User needs to be approved first")
+    return await repositories.decks.get_decks(season, current_user)
 
 @app.get("/users/", response_model=UserList)
 async def users(
