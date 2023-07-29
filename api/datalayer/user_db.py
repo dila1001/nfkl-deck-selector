@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from datalayer.schema.users import User
+from datalayer.schema.users import User, ArchivedUser
 # import model
 
 def get_user(db: Session, user_id: int):
@@ -12,6 +12,11 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     users = db.query(User).offset(skip).limit(limit).all()
     count = db.query(User).count()
     return (users, count)
+
+def get_archived_users(db: Session, season: str, skip: int = 0, limit: int = 100):
+    archived_users = db.query(ArchivedUser).filter(ArchivedUser.season == season).offset(skip).limit(limit).all()
+    count = db.query(ArchivedUser).filter(ArchivedUser.season == season).count()
+    return (archived_users, count)
 
 # def create_user(db: Session, user: schemas.UserCreate):
 #     fake_hashed_password = user.password + "notreallyhashed"

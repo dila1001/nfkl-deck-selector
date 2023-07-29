@@ -18,6 +18,13 @@ class User(BaseModel):
     class Config:
         from_attributes = True
 
+class ArchivedUser(BaseModel):
+    season: str
+    user: User
+
+    class Config:
+        from_attributes = True
+
 class UserList(BaseModel):
     users: list[User] | None
     total: int

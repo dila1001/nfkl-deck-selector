@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import List
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, PrimaryKeyConstraint
 from sqlalchemy.orm import relationship, Mapped
 
 from datalayer.database import Base
@@ -51,4 +51,21 @@ class Role(Base):
 #   role_id INT PRIMARY KEY,
 #   name TEXT NOT NULL,
 #   UNIQUE(role_id, name) ON CONFLICT IGNORE
+# );
+
+class ArchivedUser(Base):
+    __tablename__ = "archiveduser"
+
+    user_id = Column(String, ForeignKey("user.id"))
+    season = Column(String)
+    user: Mapped["User"] = relationship()
+    __table_args__ = (
+        PrimaryKeyConstraint(season, user_id),
+        {}
+    )
+
+# CREATE TABLE archiveduser (
+#   user_id TEXT NOT null,
+#   season TEXT NOT null,
+#   UNIQUE(season, user_id) ON CONFLICT IGNORE
 # );
