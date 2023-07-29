@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import List
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, PrimaryKeyConstraint
 from sqlalchemy.orm import relationship, Mapped
@@ -16,6 +15,18 @@ user_role_table = Table(
 #   user_id TEXT NOT NULL,
 #   role_id INT NOT NULL,
 #   UNIQUE(user_id, role_id) ON CONFLICT IGNORE
+# );
+
+class Role(Base):
+    __tablename__ = "role"
+
+    role_id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=False, index=False, nullable=True)
+
+# CREATE TABLE role (
+#   role_id INT PRIMARY KEY,
+#   name TEXT NOT NULL,
+#   UNIQUE(role_id, name) ON CONFLICT IGNORE
 # );
 
 class User(Base):
@@ -38,19 +49,6 @@ class User(Base):
 #   email TEXT UNIQUE NOT NULL,
 #   profile_pic TEXT NOT NULL,
 #   approved_user bit not null
-# );
-
-
-class Role(Base):
-    __tablename__ = "role"
-
-    role_id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=False, index=False, nullable=True)
-
-# CREATE TABLE role (
-#   role_id INT PRIMARY KEY,
-#   name TEXT NOT NULL,
-#   UNIQUE(role_id, name) ON CONFLICT IGNORE
 # );
 
 class ArchivedUser(Base):
