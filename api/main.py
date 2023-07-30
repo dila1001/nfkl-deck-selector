@@ -4,11 +4,22 @@ from model.season import SeasonList
 from model.user import UserList, User
 from model.deck import DeckList
 from model.group import GroupList
+from model.game import GameList
 from model.token import Token
 import security.auth, security.google
-import repositories.users, repositories.decks, repositories.seasons, repositories.group
+import repositories.users, repositories.decks, repositories.seasons, repositories.group, repositories.games
 
 app = FastAPI()
+
+@app.get("/games/{season}", response_model=GameList)
+async def games(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    season:str
+):
+    if not current_user.approved_user:
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "User needs to be approved first")
+
+    return await repositories.games.get_all_decks(season=season)
 
 @app.get("/groups", response_model=GroupList, response_model_exclude_none=True)
 async def groups(
@@ -18,7 +29,6 @@ async def groups(
         raise __create_exception(status.HTTP_401_UNAUTHORIZED, "User needs to be approved first")
 
     return await repositories.group.groups()
-
 
 @app.get("/groups/{season}", response_model=GroupList, response_model_exclude_none=True)
 async def groups(
