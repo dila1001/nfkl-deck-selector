@@ -77,6 +77,16 @@ async def decks(
     user_id = current_user.id if user_id is None else user_id
     return await repositories.decks.get_decks(season=season, user_id=user_id)
 
+@app.post("/decks", response_model=DeckList, response_model_exclude_none=True)
+async def register_decks(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    links:list[str]
+):
+    if not current_user.approved_user:
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "User needs to be approved first")
+
+    return await repositories.decks.register_decks(links, current_user.id)
+
 @app.delete("/decks/{deck_id}")
 async def delete_deck(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],
