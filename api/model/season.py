@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class SeasonType(BaseModel):
     season_type: str
-#    season_type_id: int
+    season_type_id: int
 
     class Config:
         from_attributes = True

@@ -1,6 +1,6 @@
 from typing import Union, Annotated
 from fastapi import FastAPI, Depends, Request, HTTPException, status
-from model.season import SeasonList
+from model.season import SeasonList, Season
 from model.user import UserList, User, UserCreate
 from model.deck import DeckList
 from model.group import GroupList
@@ -58,6 +58,16 @@ async def seasons(
         raise __create_exception(status.HTTP_401_UNAUTHORIZED, "User needs to be approved first")
 
     return await repositories.seasons.get_all_seasons()
+
+@app.post("/seasons", response_model=Season)
+async def create_season(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    season: Season
+):
+    if not security.auth.has_role(current_user, 'Admin'):
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Admin only endpoint")
+
+    return await repositories.seasons.create_season(season=season)
 
 @app.get("/decks", response_model=DeckList, response_model_exclude_none=True)
 async def decks(

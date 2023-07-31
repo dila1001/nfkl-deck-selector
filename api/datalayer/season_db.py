@@ -4,3 +4,13 @@ from datalayer.schema.seasons import Season
 def get_all_seasons(db: Session):
     seasons = db.query(Season).all()
     return seasons
+
+def get_season(db: Session, season: str):
+    season_data = db.query(Season).filter(Season.season==season).first()
+    return season_data
+
+def save_season(db: Session, season: Season):
+    db.add(season)
+    db.commit()
+    db.refresh(season)
+    return season
