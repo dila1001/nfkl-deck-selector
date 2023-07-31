@@ -95,7 +95,7 @@ async def archived_users(
 
 @app.get("/login/callback", response_model=Token)
 async def login_callback(code: str, request: Request):
-    access_token = security.google.login_user(code, request.url._url, request.base_url._url)
+    access_token = await security.google.login_user(code, request.url._url, request.base_url._url)
     return { "access_token": access_token, "token_type": "bearer" }
 
 @app.get("/login")

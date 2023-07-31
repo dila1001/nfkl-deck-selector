@@ -4,6 +4,8 @@ import requests
 import security.auth
 import json
 from oauthlib.oauth2 import WebApplicationClient
+from repositories.users import create_user, get_user
+from model.user import User
 
 load_dotenv()
 __GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
@@ -11,7 +13,7 @@ __GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 __GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 __SITE_URL = os.environ.get("SITE_URL", None)
 
-def login_user(code: str, request_url: str, base_url: str):
+async def login_user(code: str, request_url: str, base_url: str):
     google_provider_cfg = __get_google_provider_cfg()
 
     client = WebApplicationClient(__GOOGLE_CLIENT_ID)
@@ -46,6 +48,17 @@ def login_user(code: str, request_url: str, base_url: str):
         users_email = userinfo_response.json()["email"]
         picture = userinfo_response.json()["picture"]
         users_name = userinfo_response.json()["name"]
+        if not await __user_exist(user_id=unique_id):
+                await create_user(user=
+                                User(
+                     id=unique_id,
+                     name=users_name,
+                     email=users_email,
+                     profile_pic=picture,
+                     tco=None,
+                     discord=None,
+                     approved_user=False,
+                     roles=[]))
         return security.auth.login_user(user_id=unique_id)
     else:
         return "User email not available or not verified by Google.", 400
@@ -58,6 +71,10 @@ def get_auth_endpoint(base_url: str):
         scope=["openid", "email", "profile"],
     )
     return request_uri;
+
+async def __user_exist(user_id: str):
+     user = await get_user(user_id=user_id)
+     return user is not None
 
 def __get_google_provider_cfg():
     google_provider_cfg = requests.get(__GOOGLE_DISCOVERY_URL).json()

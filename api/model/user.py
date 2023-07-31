@@ -6,7 +6,7 @@ class Role(BaseModel):
         from_attributes = True
 
 class User(BaseModel):
-    id: int
+    id: str
     name: str
     discord: str | None
     tco: str | None
