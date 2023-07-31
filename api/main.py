@@ -62,6 +62,7 @@ async def seasons(
 @app.get("/decks", response_model=DeckList, response_model_exclude_none=True)
 async def decks(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    user_id: str = None,
     season: str = None,
     include_all: bool = False
 ):
@@ -71,8 +72,10 @@ async def decks(
         raise __create_exception(status.HTTP_401_UNAUTHORIZED, "`include_all` is only available for Admin")
 
     if include_all:
-        return await repositories.decks.get_all_decks()
-    return await repositories.decks.get_decks_by_season(season, current_user)
+        return await repositories.decks.get_all_decks(season=season)
+
+    user_id = current_user.id if user_id is None else user_id
+    return await repositories.decks.get_decks(season=season, user_id=user_id)
 
 @app.get("/users", response_model=UserList)
 async def users(
