@@ -106,6 +106,16 @@ async def update_user(
 
     return await repositories.users.update_user(user=user, user_id=user_id)
 
+@app.post("/users/{user_id}/approve", response_model=User)
+async def approve_user(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    user_id: str
+):
+    if not security.auth.has_role(current_user, 'Admin'):
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Admin only endpoint")
+
+    return await repositories.users.approve_user(user_id=user_id)
+
 @app.get("/login/callback", response_model=Token)
 async def login_callback(code: str, request: Request):
     access_token = await security.google.login_user(code, request.url._url, request.base_url._url)

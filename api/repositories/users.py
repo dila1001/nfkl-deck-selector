@@ -44,3 +44,10 @@ async def update_user(user: UserCreate, user_id: str):
         setattr(db_user, key, value)
     updated_user = datalayer.user_db.save_user(db, user=db_user)
     return User.model_validate(updated_user)
+
+async def approve_user(user_id: str):
+    db: Session = next(get_db())
+    db_user = datalayer.user_db.get_user(db, user_id=user_id)
+    setattr(db_user, "approved_user", True)
+    updated_user = datalayer.user_db.save_user(db, user=db_user)
+    return User.model_validate(updated_user)
