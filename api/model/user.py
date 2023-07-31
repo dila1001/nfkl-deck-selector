@@ -5,7 +5,16 @@ class Role(BaseModel):
     class Config:
         from_attributes = True
 
-class User(BaseModel):
+class UserCreate(BaseModel):
+    name: str
+    discord: str | None
+    tco: str | None
+    profile_pic: str
+
+    class Config:
+        from_attributes = True
+
+class User(UserCreate):
     id: str
     name: str
     discord: str | None

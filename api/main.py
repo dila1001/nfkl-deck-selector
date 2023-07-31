@@ -1,7 +1,7 @@
 from typing import Union, Annotated
 from fastapi import FastAPI, Depends, Request, HTTPException, status
 from model.season import SeasonList
-from model.user import UserList, User
+from model.user import UserList, User, UserCreate
 from model.deck import DeckList
 from model.group import GroupList
 from model.game import GameList
@@ -92,6 +92,19 @@ async def archived_users(
     if not security.auth.has_role(current_user, 'Admin'):
         raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Admin only endpoint")
     return await repositories.users.get_archived_users(season=season, page_number=page_number, page_size=page_size)
+
+@app.patch("/users/{user_id}", response_model=User)
+async def update_user(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    user: UserCreate,
+    user_id: str
+):
+    update_other_user = current_user.id != user_id
+    is_admin = security.auth.has_role(current_user, 'Admin')
+    if update_other_user and not is_admin:
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Only admin can update other users")
+
+    return await repositories.users.update_user(user=user, user_id=user_id)
 
 @app.get("/login/callback", response_model=Token)
 async def login_callback(code: str, request: Request):

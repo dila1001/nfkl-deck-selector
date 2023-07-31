@@ -1,7 +1,7 @@
 from datalayer.database import get_db
 from sqlalchemy.orm import Session
 import datalayer.user_db
-from model.user import UserList, User
+from model.user import UserList, User, UserCreate
 import datalayer.schema.users
 
 async def users(page_number: int=0, page_size: int=100):
@@ -33,5 +33,14 @@ async def create_user(user: User):
             discord=user.discord,
             tco=user.tco,
         )
-    new_user = datalayer.user_db.create_user(db, user=db_user)
+    new_user = datalayer.user_db.save_user(db, user=db_user)
     return User.model_validate(new_user)
+
+async def update_user(user: UserCreate, user_id: str):
+    db: Session = next(get_db())
+    db_user = datalayer.user_db.get_user(db, user_id=user_id)
+    user_data = user.model_dump(exclude_unset=True)
+    for key, value in user_data.items():
+        setattr(db_user, key, value)
+    updated_user = datalayer.user_db.save_user(db, user=db_user)
+    return User.model_validate(updated_user)
