@@ -37,6 +37,7 @@ class GameActive(Game):
     # player2_decks: list[Deck] | None
     choices: list[Choice] | None
     scores: list[Score] | None
+    decks: list[Deck] | None
 
     class Config:
         from_attributes = True

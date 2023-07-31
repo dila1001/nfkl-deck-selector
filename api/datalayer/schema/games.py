@@ -1,6 +1,17 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import Column, Integer, String, ForeignKey, PrimaryKeyConstraint, Table
 from sqlalchemy.orm import relationship, Mapped
 from datalayer.database import Base
+from datalayer.schema.decks import Deck
+
+game_deck_table = Table(
+    "gameDeck",
+    Base.metadata,
+    Column("game_id", ForeignKey("game.game_id"), primary_key=True),
+    Column("user_id", ForeignKey("user.id"), primary_key=True),
+    Column("deck_id", ForeignKey("deck.deck_id"), primary_key=True),
+    extend_existing=True,
+)
+
 class Game(Base):
     __tablename__ = "game"
 
@@ -9,13 +20,16 @@ class Game(Base):
     season = Column(String)
     player1_id = Column(String, ForeignKey("user.id"))
     player1 = relationship("User", primaryjoin="Game.player1_id==User.id")
+    # player1_decks = relationship("Deck", primaryjoin="and_(GameDeck.deck_id==Deck.deck_id, GameDeck.user_id==Game.player1_id)", secondary="GameDeck", secondaryjoin="and_(GameDeck.deck_id==Deck.deck_id, GameDeck.game_id==Game.game_id, GameDeck.user_id==Game.player1_id)")
     player2_id = Column(String, ForeignKey("user.id"), nullable=True)
     player2 = relationship("User", primaryjoin="Game.player2_id==User.id")
+    # player2_decks = relationship("Deck", secondary="GameDeck", secondaryjoin="and_(GameDeck.deck_id==Deck.deck_id, GameDeck.game_id==Game.game_id, GameDeck.user_id==Game.player2_id)")
     game_created = Column(Integer)
     game_updated = Column(Integer, nullable=True)
     game_finished = Column(Integer, nullable=True)
     choices: Mapped[list["Choice"]] = relationship("Choice", primaryjoin="Game.game_id==Choice.game_id")
     scores: Mapped[list["Score"]] = relationship("Score", primaryjoin="Game.game_id==Score.game_id")
+    decks: Mapped[list[Deck]] = relationship(secondary=game_deck_table)
 
 # CREATE TABLE "game" (
 #   game_id TEXT PRIMARY KEY,
@@ -74,17 +88,17 @@ class Score(Base):
 #   UNIQUE(game_id, round_id) ON CONFLICT IGNORE
 # );
 
-class GameDeck(Base):
-    __tablename__ = "gameDeck"
+# class GameDeck(Base):
+#     __tablename__ = "gameDeck"
 
-    game_id = Column(String, ForeignKey("game.game_id"))
-    user_id = Column(String)
-    deck_id = Column(String)
+#     game_id = Column(String, ForeignKey("game.game_id"))
+#     user_id = Column(String, ForeignKey("user"))
+#     deck_id = Column(String, ForeignKey("deck.deck_id"))
 
-    __table_args__ = (
-        PrimaryKeyConstraint(game_id, deck_id, user_id),
-        {}
-    )
+#     __table_args__ = (
+#         PrimaryKeyConstraint(game_id, deck_id, user_id),
+#         {}
+#     )
 
 # CREATE TABLE gameDeck(
 #   game_id TEXT NOT NULL,
