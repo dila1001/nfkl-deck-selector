@@ -47,7 +47,8 @@ async def register_decks(links: list[str], user_id: str):
         uuid = __get_uuid(link)
         if uuid is None: continue
         if await __deck_exists(deck_id=uuid, user_id=user_id):
-            await enable_deck(deck_id=uuid, user_id=user_id)
+            deck = await enable_deck(deck_id=uuid, user_id=user_id)
+            decks.append(deck)
             continue
 
         keyForgeDeck: apiclients.keyforge_api.KeyForgeDeck = await apiclients.keyforge_api.crawl_deck(uuid=uuid)
