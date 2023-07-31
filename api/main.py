@@ -77,6 +77,14 @@ async def decks(
     user_id = current_user.id if user_id is None else user_id
     return await repositories.decks.get_decks(season=season, user_id=user_id)
 
+@app.delete("/decks/{deck_id}")
+async def delete_deck(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    deck_id: str
+):
+    await repositories.decks.disable_deck(deck_id=deck_id, user_id=current_user.id)
+    return { "Success": True}
+
 @app.get("/users", response_model=UserList)
 async def users(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],
