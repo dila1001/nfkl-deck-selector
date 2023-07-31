@@ -11,7 +11,7 @@ import repositories.users, repositories.decks, repositories.seasons, repositorie
 
 app = FastAPI()
 
-@app.get("/games/{season}", response_model=GameList)
+@app.get("/games/seasons/{season}", response_model=GameList, response_model_exclude_none=True)
 async def games(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],
     season:str
@@ -20,6 +20,16 @@ async def games(
         raise __create_exception(status.HTTP_401_UNAUTHORIZED, "User needs to be approved first")
 
     return await repositories.games.get_all_games(season=season)
+
+@app.get("/games/{game_id}", response_model=GameList, response_model_exclude_none=True)
+async def active_game(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    game_id:str
+):
+    if not current_user.approved_user:
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "User needs to be approved first")
+
+    return await repositories.games.get_game(game_id=game_id)
 
 @app.get("/groups", response_model=GroupList, response_model_exclude_none=True)
 async def groups(

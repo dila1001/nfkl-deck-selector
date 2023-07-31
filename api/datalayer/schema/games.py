@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, PrimaryKeyConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 from datalayer.database import Base
-
 class Game(Base):
     __tablename__ = "game"
 
@@ -15,6 +14,8 @@ class Game(Base):
     game_created = Column(Integer)
     game_updated = Column(Integer, nullable=True)
     game_finished = Column(Integer, nullable=True)
+    choices: Mapped[list["Choice"]] = relationship("Choice", primaryjoin="Game.game_id==Choice.game_id")
+    scores: Mapped[list["Score"]] = relationship("Score", primaryjoin="Game.game_id==Score.game_id")
 
 # CREATE TABLE "game" (
 #   game_id TEXT PRIMARY KEY,
@@ -30,11 +31,14 @@ class Game(Base):
 class Choice(Base):
     __tablename__ = "choice"
 
-    game_id = Column(String)
+    game_id = Column(String, ForeignKey("game.game_id"))
     round_id = Column(Integer)
     round_type = Column(String)
-    user_id = Column(String)
-    deck_id = Column(Integer)
+    user_id = Column(String, ForeignKey("user.id"))
+    # No need to resolve user since choice is always presented with Game class
+    # user = relationship("User", primaryjoin="Choice.user_id==User.id")
+    deck_id = Column(Integer, ForeignKey("deck.deck_id"), nullable=True)
+    deck = relationship("Deck", primaryjoin="and_(Choice.deck_id==Deck.deck_id, Choice.user_id==Deck.user_id)")
     __table_args__ = (
         PrimaryKeyConstraint(game_id, round_id,user_id),
         {}
@@ -52,7 +56,7 @@ class Choice(Base):
 class Score(Base):
     __tablename__ = "score"
 
-    game_id = Column(String)
+    game_id = Column(String, ForeignKey("game.game_id"))
     round_id = Column(Integer)
     player1_keys = Column(Integer, nullable=True)
     player2_keys = Column(Integer, nullable=True)
@@ -73,7 +77,7 @@ class Score(Base):
 class GameDeck(Base):
     __tablename__ = "gameDeck"
 
-    game_id = Column(String)
+    game_id = Column(String, ForeignKey("game.game_id"))
     user_id = Column(String)
     deck_id = Column(String)
 
