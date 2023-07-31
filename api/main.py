@@ -19,7 +19,7 @@ async def games(
     if not current_user.approved_user:
         raise __create_exception(status.HTTP_401_UNAUTHORIZED, "User needs to be approved first")
 
-    return await repositories.games.get_all_decks(season=season)
+    return await repositories.games.get_all_games(season=season)
 
 @app.get("/groups", response_model=GroupList, response_model_exclude_none=True)
 async def groups(
