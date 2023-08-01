@@ -1,5 +1,6 @@
 from datalayer.database import get_db
 from sqlalchemy.orm import Session
+import datalayer.database
 import datalayer.deck_db
 import datalayer.schema.decks
 from model.deck import DeckList, Deck
@@ -29,14 +30,14 @@ async def disable_deck(deck_id: str, user_id: str):
     db: Session = next(get_db())
     db_deck = datalayer.deck_db.get_deck(db, user_id=user_id, deck_id=deck_id)
     setattr(db_deck, "enabled", False)
-    updated_deck = datalayer.deck_db.save_deck(db, deck=db_deck)
+    updated_deck = datalayer.database.save(db, data=db_deck)
     return Deck.model_validate(updated_deck)
 
 async def enable_deck(deck_id: str, user_id: str):
     db: Session = next(get_db())
     db_deck = datalayer.deck_db.get_deck(db, user_id=user_id, deck_id=deck_id)
     setattr(db_deck, "enabled", True)
-    updated_deck = datalayer.deck_db.save_deck(db, deck=db_deck)
+    updated_deck = datalayer.database.save(db, data=db_deck)
     return Deck.model_validate(updated_deck)
 
 async def register_decks(links: list[str], user_id: str):
@@ -62,14 +63,14 @@ async def register_decks(links: list[str], user_id: str):
             expansion=keyForgeDeck.expansion,
             enabled=True
         )
-        deck = datalayer.deck_db.save_deck(db, deck=db_deck)
+        deck = datalayer.database.save(db, data=db_deck)
         decks.append(deck)
 
     return DeckList(decks=decks)
 
 async def __deck_exists(deck_id:str, user_id:str):
     db: Session = next(get_db())
-    db_deck = datalayer.deck_db.get_deck(db, user_id=user_id, deck_id=deck_id)
+    db_deck = datalayer.data.get_deck(db, user_id=user_id, deck_id=deck_id)
     return db_deck is not None
 
 def __get_uuid(text:str ):

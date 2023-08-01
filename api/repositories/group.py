@@ -1,4 +1,5 @@
 from datalayer.database import get_db
+import datalayer.database
 from sqlalchemy.orm import Session
 import datalayer.group_db
 import datalayer.schema.group
@@ -35,5 +36,5 @@ async def add_user_to_group(group_name: str, season: str, user_id: str):
         setattr(db_group_user, "season", season)
         setattr(db_group_user, "group_id",group.group_id)
 
-    db_group_user = datalayer.group_db.save_group_user(db, group_user=db_group_user)
+    db_group_user = datalayer.database.save(db, data=db_group_user)
     return GroupUser.model_validate(db_group_user)

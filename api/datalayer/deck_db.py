@@ -21,9 +21,3 @@ def get_all_decks_by_season(db: Session, season: str):
 def get_deck(db: Session, user_id: str, deck_id: str):
     deck = db.query(Deck).filter(and_(Deck.deck_id==deck_id, Deck.user_id==user_id)).first()
     return deck
-
-def save_deck(db: Session, deck: Deck):
-    db.add(deck)
-    db.commit()
-    db.refresh(deck)
-    return deck

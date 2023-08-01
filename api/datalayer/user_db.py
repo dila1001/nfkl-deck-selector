@@ -13,12 +13,6 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     count = db.query(User).count()
     return (users, count)
 
-def save_user(db: Session, user: User):
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
-
 def get_archived_users(db: Session, season: str, skip: int = 0, limit: int = 100):
     archived_users = db.query(ArchivedUser).filter(ArchivedUser.season == season).offset(skip).limit(limit).all()
     count = db.query(ArchivedUser).filter(ArchivedUser.season == season).count()

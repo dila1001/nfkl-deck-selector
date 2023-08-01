@@ -1,4 +1,5 @@
 from datalayer.database import get_db
+import datalayer.database
 from sqlalchemy.orm import Session
 import datalayer.season_db
 import datalayer.schema.seasons
@@ -15,7 +16,7 @@ async def set_season_active_status(active: bool, season: str):
     db_season = datalayer.season_db.get_season(db,season=season)
 
     setattr(db_season, "is_active", active)
-    db_season = datalayer.season_db.save_season(db, season=db_season)
+    db_season = datalayer.database.save(db, data=db_season)
     return Season.model_validate(db_season)
 
 async def create_season(season: Season):
@@ -41,7 +42,7 @@ async def create_season(season: Season):
         end_date=0
     )
 
-    season = datalayer.season_db.save_season(db, season=season_db)
+    season = datalayer.database.save(db, data=season_db)
 
     return Season.model_validate(season)
 

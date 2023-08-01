@@ -34,7 +34,7 @@ async def create_user(user: User):
             discord=user.discord,
             tco=user.tco,
         )
-    new_user = datalayer.user_db.save_user(db, user=db_user)
+    new_user = datalayer.database.save(db, data=db_user)
     return User.model_validate(new_user)
 
 async def update_user(user: UserCreate, user_id: str):
@@ -43,14 +43,14 @@ async def update_user(user: UserCreate, user_id: str):
     user_data = user.model_dump(exclude_unset=True)
     for key, value in user_data.items():
         setattr(db_user, key, value)
-    updated_user = datalayer.user_db.save_user(db, user=db_user)
+    updated_user = datalayer.database.save(db, data=db_user)
     return User.model_validate(updated_user)
 
 async def approve_user(user_id: str):
     db: Session = next(get_db())
     db_user = datalayer.user_db.get_user(db, user_id=user_id)
     setattr(db_user, "approved_user", True)
-    updated_user = datalayer.user_db.save_user(db, user=db_user)
+    updated_user = datalayer.save(db, data=db_user)
     return User.model_validate(updated_user)
 
 async def set_archive_status(user_id: str, season: str, archive: bool):

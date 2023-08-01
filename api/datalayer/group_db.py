@@ -17,9 +17,3 @@ def get_group(db: Session, group_name: str):
 def get_group_user(db: Session, user_id: str, season: str):
     group_user = db.query(GroupUser).filter(and_(GroupUser.user_id==user_id, GroupUser.season==season)).first()
     return group_user
-
-def save_group_user(db: Session, group_user: GroupUser):
-    db.add(group_user)
-    db.commit()
-    db.refresh(group_user)
-    return group_user
