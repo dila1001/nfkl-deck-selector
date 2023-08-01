@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends, Request, HTTPException, status
 from model.season import SeasonList, Season
 from model.user import UserList, User, UserCreate
 from model.deck import DeckList
-from model.group import GroupList
+from model.group import GroupList, GroupUser
 from model.game import GameList
 from model.token import Token
 import security.auth, security.google
@@ -41,7 +41,7 @@ async def groups(
     return await repositories.group.groups()
 
 @app.get("/groups/{season}", response_model=GroupList, response_model_exclude_none=True)
-async def groups(
+async def groups_by_season(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],
     season:str
 ):
@@ -49,6 +49,18 @@ async def groups(
         raise __create_exception(status.HTTP_401_UNAUTHORIZED, "User needs to be approved first")
 
     return await repositories.group.get_group_user(season=season)
+
+@app.post("/groups/{group_name}", response_model=GroupUser, response_model_exclude_none=True)
+async def add_user_to_group(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    group_name:str,
+    season:str,
+    user_id: str
+):
+    if not security.auth.has_role(current_user, 'Admin'):
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Admin only endpoint")
+
+    return await repositories.group.add_user_to_group(group_name=group_name, season=season, user_id=user_id)
 
 @app.get("/seasons", response_model=SeasonList)
 async def seasons(
