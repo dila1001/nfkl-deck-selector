@@ -1,8 +1,9 @@
 from datalayer.database import get_db
 from sqlalchemy.orm import Session
 import datalayer.user_db
-from model.user import UserList, User, UserCreate
+from model.user import UserList, User, UserCreate, ArchivedUser
 import datalayer.schema.users
+import datalayer.database
 
 async def users(page_number: int=0, page_size: int=100):
     db: Session = next(get_db())
@@ -51,3 +52,25 @@ async def approve_user(user_id: str):
     setattr(db_user, "approved_user", True)
     updated_user = datalayer.user_db.save_user(db, user=db_user)
     return User.model_validate(updated_user)
+
+async def set_archive_status(user_id: str, season: str, archive: bool):
+    db: Session = next(get_db())
+
+    # Check if user is already archived
+    db_archived_user:datalayer.schema.users.ArchivedUser = datalayer.user_db.get_archived_user(db, user_id=user_id, season=season)
+    if db_archived_user is None:
+        if not archive:
+            return None
+
+        db_archived_user = datalayer.schema.users.ArchivedUser(
+            user_id=user_id,
+            season=season
+        )
+        datalayer.database.save(db, data=db_archived_user)
+        return None
+    else:
+        # User is already archived so no changes needed
+        if archive: return None
+
+    #To unarchive a user delete it from the UserArchive table
+    datalayer.database.delete(db, data=db_archived_user)

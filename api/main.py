@@ -177,6 +177,19 @@ async def approve_user(
 
     return await repositories.users.approve_user(user_id=user_id)
 
+@app.post("/users/{user_id}/archive")
+async def archive_user(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    user_id: str,
+    season: str,
+    archive: bool = True,
+):
+    if not security.auth.has_role(current_user, 'Admin'):
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Admin only endpoint")
+
+    await repositories.users.set_archive_status(user_id=user_id, season=season, archive=archive)
+    return {"Success": True}
+
 @app.get("/login/callback", response_model=Token)
 async def login_callback(code: str, request: Request):
     access_token = await security.google.login_user(code, request.url._url, request.base_url._url)

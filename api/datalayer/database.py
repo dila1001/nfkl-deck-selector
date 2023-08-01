@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 import os
 
 load_dotenv()
@@ -23,3 +23,13 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def delete(db: Session, data: object):
+    db.delete(data)
+    db.commit()
+
+def save(db: Session, data: object):
+    db.add(data)
+    db.commit()
+    db.refresh(data)
+    return data
