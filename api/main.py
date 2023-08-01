@@ -69,6 +69,24 @@ async def create_season(
 
     return await repositories.seasons.create_season(season=season)
 
+@app.post("/seasons/{season}/enable", response_model=Season)
+async def create_season(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    season: str
+):
+    if not security.auth.has_role(current_user, 'Admin'):
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Admin only endpoint")
+    return await repositories.seasons.set_season_active_status(active=True, season=season)
+
+@app.post("/seasons/{season}/disable", response_model=Season)
+async def create_season(
+    current_user: Annotated[User, Depends(security.auth.get_current_user)],
+    season: str
+):
+    if not security.auth.has_role(current_user, 'Admin'):
+        raise __create_exception(status.HTTP_401_UNAUTHORIZED, "Admin only endpoint")
+    return await repositories.seasons.set_season_active_status(active=False, season=season)
+
 @app.get("/decks", response_model=DeckList, response_model_exclude_none=True)
 async def decks(
     current_user: Annotated[User, Depends(security.auth.get_current_user)],

@@ -10,6 +10,14 @@ async def get_all_seasons():
     seasons = datalayer.season_db.get_all_seasons(db)
     return SeasonList(seasons=seasons)
 
+async def set_season_active_status(active: bool, season: str):
+    db: Session = next(get_db())
+    db_season = datalayer.season_db.get_season(db,season=season)
+
+    setattr(db_season, "is_active", active)
+    db_season = datalayer.season_db.save_season(db, season=db_season)
+    return Season.model_validate(db_season)
+
 async def create_season(season: Season):
     db: Session = next(get_db())
     if __season_exist(season.season):
