@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   Navbar,
-  Center,
   Tooltip,
   UnstyledButton,
   createStyles,
@@ -12,14 +11,13 @@ import {
 } from "@mantine/core";
 import {
   IconHome2,
-  IconGauge,
-  IconDeviceDesktopAnalytics,
-  IconFingerprint,
-  IconCalendarStats,
-  IconUser,
   IconSettings,
   IconLogout,
-  IconSwitchHorizontal,
+  IconCards,
+  IconShirtSport,
+  IconDice3,
+  IconUserHexagon,
+  IconDeviceAnalytics,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 
@@ -79,12 +77,11 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 
 const mockdata = [
   { icon: IconHome2, label: "Home", route: "/" },
-  { icon: IconGauge, label: "Dashboard", route: "/decks" },
-  { icon: IconDeviceDesktopAnalytics, label: "Analytics", route: "/games" },
-  { icon: IconCalendarStats, label: "Releases", route: "/profile" },
-  { icon: IconUser, label: "Account", route: "/divisions" },
-  { icon: IconFingerprint, label: "Security", route: "/statistics" },
-  { icon: IconSettings, label: "Settings", route: "/admin" },
+  { icon: IconDice3, label: "Games", route: "/games" },
+  { icon: IconCards, label: "Decks", route: "/decks" },
+  { icon: IconShirtSport, label: "Divisions", route: "/divisions" },
+  { icon: IconDeviceAnalytics, label: "Statistics", route: "/statistics" },
+  { icon: IconUserHexagon, label: "Admin", route: "/admin" },
 ];
 
 export default function NavbarMinimal({ openState }: { openState: boolean }) {
@@ -119,7 +116,7 @@ export default function NavbarMinimal({ openState }: { openState: boolean }) {
       </Navbar.Section>
       <Navbar.Section>
         <Stack justify="center" spacing={0}>
-          <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
+          <NavbarLink icon={IconSettings} active={6 === active} label="Settings" onClick={() => handleClick("/profile", 6)} />
           <NavbarLink icon={IconLogout} label="Logout" />
         </Stack>
       </Navbar.Section>
