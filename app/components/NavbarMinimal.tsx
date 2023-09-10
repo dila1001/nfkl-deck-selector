@@ -19,7 +19,7 @@ import {
   IconDeviceAnalytics,
   IconDeviceGamepad2,
 } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -84,8 +84,17 @@ const linkData = [
   { icon: IconUserHexagon, label: "Admin", route: "/admin" },
 ];
 
-export default function NavbarMinimal({ openState }: { openState: boolean }) {
-  const [active, setActive] = useState(0);
+export default function NavbarMinimal({ openState }: { openState: boolean}) {
+  const pathName = usePathname();
+  let startIndex = 0;
+  linkData.forEach((link, index) => {
+    if (link.route === pathName){
+      startIndex = index;
+      return;
+    }
+  });
+
+  const [active, setActive] = useState(startIndex);
   const router = useRouter();
 
   const handleClick = (route: string, index: number) => {
