@@ -75,7 +75,7 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
   );
 }
 
-const mockdata = [
+const linkData = [
   { icon: IconHome2, label: "Home", route: "/" },
   { icon: IconDeviceGamepad2, label: "Games", route: "/games" },
   { icon: IconCards, label: "Decks", route: "/decks" },
@@ -93,7 +93,7 @@ export default function NavbarMinimal({ openState }: { openState: boolean }) {
     setActive(index);
   };
 
-  const links = mockdata.map((link, index) => (
+  const links = linkData.map((link, index) => (
     <NavbarLink
       {...link}
       key={link.label}
