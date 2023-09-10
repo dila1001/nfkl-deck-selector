@@ -15,9 +15,9 @@ import {
   IconLogout,
   IconCards,
   IconShirtSport,
-  IconDice3,
   IconUserHexagon,
   IconDeviceAnalytics,
+  IconDeviceGamepad2,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 
@@ -77,7 +77,7 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 
 const mockdata = [
   { icon: IconHome2, label: "Home", route: "/" },
-  { icon: IconDice3, label: "Games", route: "/games" },
+  { icon: IconDeviceGamepad2, label: "Games", route: "/games" },
   { icon: IconCards, label: "Decks", route: "/decks" },
   { icon: IconShirtSport, label: "Divisions", route: "/divisions" },
   { icon: IconDeviceAnalytics, label: "Statistics", route: "/statistics" },
